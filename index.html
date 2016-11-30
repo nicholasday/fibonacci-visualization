@@ -104,7 +104,7 @@ var update = function(value) {
                 }
             } else if ((i % 4) == 2) {
                 //left
-                var x = 20 * fibonacci_sequence[i - 1] + 20 * fibonacci_sequence[i - 2] + last_x;
+                var x = last_x - 20 * d;
             } else if ((i % 4) == 3) {
                 //down
                 var x = last_x;
@@ -124,6 +124,7 @@ var update = function(value) {
             last_y = y;
             return y;
         })
+        .attr("stroke", "black")
         .attr("fill", "rgba(124,240,10,0.5)")
         .attr("width", function(d) {
             return d * 20;
