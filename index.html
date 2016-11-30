@@ -36,6 +36,7 @@
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 var element = document.getElementById("equation");
 
 var recursiveEquation = "\\begin{aligned}" +
@@ -117,6 +118,8 @@ var update = function(value) {
             last_x = x
             return x;
         })
+        .transition()
+        .duration(1000)
         .attr("y", function(d, i) {
             if (last_y == 0) {
                 var y = height/2 - 20 * d
@@ -135,7 +138,7 @@ var update = function(value) {
             return d * 20;
         });
 
-    rects.exit().remove();
+    rects.exit().transition().duration(1000).attr("y", 0).remove();
     katex.render("f(" + value + ") = " + result, equationResultKatex);
     d3.select('.equationResult2').text(fibonacci_sequence);
 };
@@ -145,6 +148,7 @@ update(9);
 equationInput.on("input", function() {
 	update(this.value);
 });
+}, false);
 </script>
 </body>
 </html>
