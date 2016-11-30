@@ -8,16 +8,28 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/katex.min.css" rel="stylesheet" >
     <link href="css/slider.css" rel="stylesheet" >
+    <link href="css/styles.css" rel="stylesheet" >
 </head>
 <body>
-<div class="container">
-    <div id="equation"></div>
-	<label for="equationInput" 
-	  	 style="display: inline-block; width: 240px; text-align: right">
-	  	 nth term = <span class="equationInputValue"></span>
-	</label>
-    <input type="range" min="1" max="15" id="equationInput" class="equationInput">
-    <div class="equationResult"></div>
+<div class="container center">
+    <h1 class="center">Fibonacci Sequence</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <h3 class="center">Recursive Equation</h3>
+            <div id="equation"></div>
+        </div>
+        <div class="col-md-4 dynamic">
+            <input type="range" min="1" max="15" id="equationInput" class="equationInput">
+            <div id="equationResult" class="equationResult"></div>
+            <div class="equationResult2"></div>
+        </div>
+        <div class="col-md-4">
+            <h3 class="center">Explicit Equation</h3>
+        </div>
+    </div>
+    <hr />
+    <svg id="svg"></svg>
 </div>
 <script src="js/d3.min.js"></script>
 <script src="js/katex.min.js"></script>
@@ -25,27 +37,85 @@
 <script src="js/bootstrap.min.js"></script>
 <script>
 var element = document.getElementById("equation");
-katex.render("c = \\pm\\sqrt{a^2 + b^2}", element);
+
+var recursiveEquation = "\\begin{aligned}" +
+    "f(x)=\\begin{cases} " +
+    "1 & x = 1, 2\\\\ " + 
+    "f(x -2) + f(x - 1) & x > 1 " +
+    "\\end{cases}" +
+    "\\end{aligned}";
+
+katex.render(recursiveEquation, element, {displayMode: true});
 
 var recursive = function(n) {
-    if (n == 1) {
+    if (n == 1 || n == 2) {
         return 1;
-    } else if (n == 0) {
-        return 0;
     } else {
         return recursive(n - 2) + recursive(n - 1);
     }
 };
 
-var update = function(value) {
-	d3.select(".equationInputValue").text(value);
-	d3.select(".equationInput").property("value", value);
-    var result = recursive(parseInt(value));
-    equationResult.text(result);
+var list = [1, 1]
+var recursive_list = function(n) {
+    if (n == 1 || n == 2) {
+        if (list.indexOf(1) === -1) {
+            list.push(1);
+        }   
+        return 1;
+    } else {
+        var recursive_result = recursive_list(n - 2) + recursive_list(n - 1);
+        if (list.indexOf(recursive_result) === -1) {
+            list.push(recursive_result);
+        }   
+        return recursive_result;
+    }
 };
 
+var width = 960;
+var height = 600;
+
+var svg = d3.select('#svg')
+            .attr('width', width)
+            .attr('height', height);
+
+svg.style('border', '1px solid red');
 var equationResult = d3.select(".equationResult")
 var equationInput = d3.select(".equationInput")
+
+var update = function(value) {
+	d3.select(".equationInput").property("value", value);
+    var result = recursive(parseInt(value));
+    var equationResultKatex = document.getElementById("equationResult");
+    recursive_list(value);
+    var rects = svg.selectAll("rect")
+        .data(list)
+        .enter()
+        .append("rect")
+
+    var last_x = 0;
+    var last_y;
+    rects.attr("x", function(d, i) {
+            if (last_x == 0) {
+                var x = width/2 - 20 * d
+            } else {
+                var x = last_x + 20 * (list[i-1])
+            }
+            last_x = x
+            console.log(x);
+            return x;
+        })
+        .attr("y", function(d) {
+            return height/2// - 10 * d;
+        })
+        .attr("width", function(d) {
+            return d * 2 + 1;
+        })
+        .attr("height", function(d) {
+            return d * 2 + 1;
+        });
+    katex.render("f(" + value + ") = " + result, equationResultKatex);
+    d3.select('.equationResult2').text(list);
+};
 
 update(9);
 
