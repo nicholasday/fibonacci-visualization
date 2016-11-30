@@ -91,7 +91,7 @@ var update = function(value) {
         .append("rect")
 
     var last_x = 0;
-    var last_y;
+    var last_y = 0;
     rects.attr("x", function(d, i) {
             if (last_x == 0) {
                 var x = width/2 - 20 * d
@@ -99,11 +99,15 @@ var update = function(value) {
                 var x = last_x + 20 * (fibonacci_sequence[i-1])
             }
             last_x = x
-            console.log(x);
             return x;
         })
         .attr("y", function(d) {
-            return height/2// - 10 * d;
+            if (last_y == 0) {
+                var y = height/2 - 20 * d
+            } else {
+                var y = last_y + 20 * (fibonacci_sequence[i-3])
+            }
+            return height - y;
         })
         .attr("fill", "rgba(124,240,10,0.5)")
         .attr("width", function(d) {
