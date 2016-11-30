@@ -93,10 +93,24 @@ var update = function(value) {
     var last_x = 0;
     var last_y = 0;
     rects.attr("x", function(d, i) {
-            if (last_x == 0) {
-                var x = width/2 - 20 * d
-            } else {
-                var x = last_x + 20 * (fibonacci_sequence[i-1])
+            if (i == 0) {
+                var x = width/2
+            } else if ((i % 4) == 1) {
+                //above
+                if (i == 1) {
+                    x = last_x;
+                } else {
+                    var x = last_x - 20 * fibonacci_sequence[i - 2];
+                }
+            } else if ((i % 4) == 2) {
+                //left
+                var x = 20 * fibonacci_sequence[i - 1] + 20 * fibonacci_sequence[i - 2] + last_x;
+            } else if ((i % 4) == 3) {
+                //down
+                var x = last_x;
+            } else if ((i % 4) == 0) {
+                //right
+                var x = last_x + 20 * fibonacci_sequence[i - 1];
             }
             last_x = x
             return x;
@@ -112,10 +126,10 @@ var update = function(value) {
         })
         .attr("fill", "rgba(124,240,10,0.5)")
         .attr("width", function(d) {
-            return d * 20 + 1;
+            return d * 20;
         })
         .attr("height", function(d) {
-            return d * 20 + 1;
+            return d * 20;
         });
     katex.render("f(" + value + ") = " + result, equationResultKatex);
     d3.select('.equationResult2').text(fibonacci_sequence);
