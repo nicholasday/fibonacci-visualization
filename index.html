@@ -55,20 +55,18 @@ var recursive = function(n) {
     }
 };
 
-var list = [1, 1]
 var recursive_list = function(n) {
-    if (n == 1 || n == 2) {
-        if (list.indexOf(1) === -1) {
+    var list = []
+    for (var i=1; i<=n; i++) {
+        if (i == 1 || i == 2) {
             list.push(1);
-        }   
-        return 1;
-    } else {
-        var recursive_result = recursive_list(n - 2) + recursive_list(n - 1);
-        if (list.indexOf(recursive_result) === -1) {
-            list.push(recursive_result);
-        }   
-        return recursive_result;
-    }
+        } else {
+            first_callback = i - 2;
+            second_callback = i - 3;
+            list.push(list[first_callback] + list[second_callback]);
+        }
+    };
+    return list;
 };
 
 var width = 960;
@@ -86,9 +84,9 @@ var update = function(value) {
 	d3.select(".equationInput").property("value", value);
     var result = recursive(parseInt(value));
     var equationResultKatex = document.getElementById("equationResult");
-    recursive_list(value);
+    var fibonacci_sequence = recursive_list(value);
     var rects = svg.selectAll("rect")
-        .data(list)
+        .data(fibonacci_sequence)
         .enter()
         .append("rect")
 
@@ -98,7 +96,7 @@ var update = function(value) {
             if (last_x == 0) {
                 var x = width/2 - 20 * d
             } else {
-                var x = last_x + 20 * (list[i-1])
+                var x = last_x + 20 * (fibonacci_sequence[i-1])
             }
             last_x = x
             console.log(x);
@@ -107,14 +105,15 @@ var update = function(value) {
         .attr("y", function(d) {
             return height/2// - 10 * d;
         })
+        .attr("fill", "rgba(124,240,10,0.5)")
         .attr("width", function(d) {
-            return d * 2 + 1;
+            return d * 20 + 1;
         })
         .attr("height", function(d) {
-            return d * 2 + 1;
+            return d * 20 + 1;
         });
     katex.render("f(" + value + ") = " + result, equationResultKatex);
-    d3.select('.equationResult2').text(list);
+    d3.select('.equationResult2').text(fibonacci_sequence);
 };
 
 update(9);
