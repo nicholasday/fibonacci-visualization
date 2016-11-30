@@ -87,12 +87,14 @@ var update = function(value) {
     var fibonacci_sequence = recursive_list(value);
     var rects = svg.selectAll("rect")
         .data(fibonacci_sequence)
-        .enter()
-        .append("rect")
 
     var last_x = 0;
     var last_y = 0;
-    rects.attr("x", function(d, i) {
+
+    rects.enter()
+        .append("rect")
+        .merge(rects)
+        .attr("x", function(d, i) {
             if (i == 0) {
                 var x = width/2
             } else if ((i % 4) == 1) {
@@ -132,6 +134,8 @@ var update = function(value) {
         .attr("height", function(d) {
             return d * 20;
         });
+
+    rects.exit().remove();
     katex.render("f(" + value + ") = " + result, equationResultKatex);
     d3.select('.equationResult2').text(fibonacci_sequence);
 };
