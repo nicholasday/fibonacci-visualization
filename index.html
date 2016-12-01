@@ -26,6 +26,7 @@
         </div>
         <div class="col-md-4">
             <h3 class="center">Explicit Equation</h3>
+            <div id="explicitEquation"></div>
         </div>
     </div>
     <hr />
@@ -38,6 +39,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 var element = document.getElementById("equation");
+var element2 = document.getElementById("explicitEquation");
 
 var recursiveEquation = "\\begin{aligned}" +
     "f(x)=\\begin{cases} " +
@@ -46,7 +48,13 @@ var recursiveEquation = "\\begin{aligned}" +
     "\\end{cases}" +
     "\\end{aligned}";
 
+var explicitEquation = "x_n = \\frac{\\sqrt{5} - 1}{2\\sqrt{5}}" +
+    "\\Bigg (\\frac{1 + \\sqrt{5}}{2}^n\\Bigg )" +
+    " + \\frac{1 + \\sqrt{5}}{2\\sqrt{5}}" +
+    "\\Bigg(\\frac{1 - \\sqrt{5}}{2}^n\\Bigg)"
+
 katex.render(recursiveEquation, element, {displayMode: true});
+katex.render(explicitEquation, element2, {displayMode: true});
 
 var recursive = function(n) {
     if (n == 1 || n == 2) {
@@ -77,7 +85,6 @@ var svg = d3.select('#svg')
             .attr('width', width)
             .attr('height', height);
 
-svg.style('border', '1px solid red');
 var equationResult = d3.select(".equationResult")
 var equationInput = d3.select(".equationInput")
 
