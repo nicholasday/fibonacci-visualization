@@ -49,9 +49,9 @@ var recursiveEquation = "\\begin{aligned}" +
     "\\end{aligned}";
 
 var explicitEquation = "x_n = \\frac{\\sqrt{5} - 1}{2\\sqrt{5}}" +
-    "\\Bigg (\\frac{1 + \\sqrt{5}}{2}^n\\Bigg )" +
+    "\\Bigg (\\frac{1 + \\sqrt{5}}{2}\\Bigg )^n" +
     " + \\frac{1 + \\sqrt{5}}{2\\sqrt{5}}" +
-    "\\Bigg(\\frac{1 - \\sqrt{5}}{2}^n\\Bigg)"
+    "\\Bigg(\\frac{1 - \\sqrt{5}}{2}\\Bigg)^n"
 
 katex.render(recursiveEquation, element, {displayMode: true});
 katex.render(explicitEquation, element2, {displayMode: true});
