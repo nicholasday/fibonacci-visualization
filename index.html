@@ -5,54 +5,80 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fibonacci Visualization</title>
+    <!-- we used bootstrap to have good styles easily without much work -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/katex.min.css" rel="stylesheet" >
+    <!-- this styles the slider (it doesn't show up correctly on firefox by
+        default) -->
     <link href="css/slider.css" rel="stylesheet" >
+    <!-- this contains some general styles for centering -->
     <link href="css/styles.css" rel="stylesheet" >
 </head>
 <body>
+<!-- Here we create the bootstrap container and set up a few rows and
+    columns for positioning -->
 <div class="container center">
     <h1 class="center">Fibonacci Sequence</h1>
     <hr />
     <div class="row">
         <div class="col-md-4">
             <h3 class="center">Recursive Equation</h3>
+            <!-- this is where the latex for recursive equation is rendered -->
             <div id="equation"></div>
         </div>
         <div class="col-md-4 dynamic">
             <input type="range" min="1" max="15" id="equationInput" class="equationInput">
             <div id="equationResult" class="equationResult"></div>
+            <!-- this is where the latex for recursive equation result is rendered -->
             <div class="equationResult2"></div>
         </div>
         <div class="col-md-4">
             <h3 class="center">Explicit Equation</h3>
+            <!-- this is where the latex for explicit equation is rendered -->
             <div id="explicitEquation"></div>
         </div>
     </div>
     <hr />
     <div class="row">
+        <!-- the library we use (d3) does data visualization and drawinging
+            inside the svg (scalable vector graphics) element -->
     <svg id="svg"></svg>
     </div>
     <hr />
     <div class="row">
         <h3 class="center">Explicit Equation Derivation</h3>
+        <!-- here is where the latex derivation for the explicit equation is
+            rendered -->
         <div class="col-md-6 left">
         </div>
         <div class="col-md-6 right">
         </div>
     </div>
 </div>
+<!-- d3 is our data visualization library, as you'll see later
+    it handles a lot of the for-loop style functionality and
+    drawing of shapes very easily compared to without it -->
 <script src="js/d3.min.js"></script>
+
+<!-- katex renders our latex equations to a html element -->
 <script src="js/katex.min.js"></script>
+
+<!-- jquery and bootstrap are used for bootstrap specific javascript
+    that is used for stuff like mobile navigation dropdowns -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+
 <script>
+// We make sure the document is loaded before executing our code
 document.addEventListener('DOMContentLoaded', function() {
+
+// Here we get the elements so that katex can render our latex to them
 var element = document.getElementById("equation");
 var element2 = document.getElementById("explicitEquation");
 var bottomRight = document.getElementsByClassName("right")[0];
 var bottomLeft = document.getElementsByClassName("left")[0];
 
+// recursive equation latex string
 var recursiveEquation = "\\begin{aligned}" +
     "f(x)=\\begin{cases} " +
     "1 & x = 1, 2\\\\ " +
@@ -60,12 +86,15 @@ var recursiveEquation = "\\begin{aligned}" +
     "\\end{cases}" +
     "\\end{aligned}";
 
+// explicition equation latex string
 var explicitEquation = "x_n = \\frac{\\sqrt{5} - 1}{2\\sqrt{5}}" +
     "\\Bigg (\\frac{1 + \\sqrt{5}}{2}\\Bigg )^n" +
     " + \\frac{1 + \\sqrt{5}}{2\\sqrt{5}}" +
     "\\Bigg(\\frac{1 - \\sqrt{5}}{2}\\Bigg)^n"
 
-var leftRecursiveDerivation = "\\begin{aligned}" +
+
+// left column of explicit equation derivation
+var leftExplicit = "\\begin{aligned}" +
     "A &= 1 - B" + 
     "\\\\ " + 
     "&= 1 - (\\frac{1 + \\sqrt{5}}{2\\sqrt{5}})" +
@@ -79,8 +108,8 @@ var leftRecursiveDerivation = "\\begin{aligned}" +
     "&= \\frac{\\sqrt{5} - 1}{2\\sqrt{5}}" + 
     "\\end{aligned}"
 
-
-var rightRecursiveDerivation = "\\begin{aligned} roots: \\\\ " +
+// right column of explicit equation derivation
+var rightExplicit = "\\begin{aligned} roots: \\\\ " +
     "\\frac{1 - \\sqrt{5}}{2}" +
     "\\frac{1 + \\sqrt{5}}{2}" +
     "\\\\ " +
@@ -116,11 +145,13 @@ var rightRecursiveDerivation = "\\begin{aligned} roots: \\\\ " +
     "B = \\frac{1 + \\sqrt{5}}{2\\sqrt{5}}" + 
     "\\\\ \\end{aligned}"
 
+// here we call katex to render our latex strings to the elements
 katex.render(recursiveEquation, element, {displayMode: true});
 katex.render(explicitEquation, element2, {displayMode: true});
-katex.render(rightRecursiveDerivation, bottomRight, {displayMode: true});
-katex.render(leftRecursiveDerivation, bottomLeft, {displayMode: true});
+katex.render(rightExplicit, bottomRight, {displayMode: true});
+katex.render(leftExplicit, bottomLeft, {displayMode: true});
 
+// This is a recursive function defined to see how it would work
 var recursive = function(n) {
     if (n == 1 || n == 2) {
         return 1;
@@ -129,6 +160,7 @@ var recursive = function(n) {
     }
 };
 
+// here is a function to get a list of the nth terms and return the list
 var recursive_list = function(n) {
     var list = []
     for (var i=1; i<=n; i++) {
@@ -143,6 +175,7 @@ var recursive_list = function(n) {
     return list;
 };
 
+// we define the width and height of the svg element
 var width = 960;
 var height = 600;
 
@@ -150,25 +183,49 @@ var svg = d3.select('#svg')
             .attr('width', width)
             .attr('height', height);
 
+// selects the equation result and input for use in d3
 var equationResult = d3.select(".equationResult")
 var equationInput = d3.select(".equationInput")
 
+// Here is where the central focus of the code is. This function is called every
+// time the equationInput number selected has changed and recalculates the
+// visualization and the result of inputting it into the equations
 var update = function(value) {
+    // Get the value from equationInput
 	d3.select(".equationInput").property("value", value);
+
+    // Get the result of the equaiton
     var result = recursive(parseInt(value));
+
+    // Post the result in a latex-formatted equationResult div
     var equationResultKatex = document.getElementById("equationResult");
+
+    // Get the list of fibonacci values to iterate over when making rects and lines
+    // for the spiral itself
     var fibonacci_sequence = recursive_list(value);
+
+    // This is where d3 specific knowledge comes in. It's kinda weird, but you
+    // select elements that aren't there assign data to them, then chain call many functions instead
+    // of iterating over data with a for loop
     var rects = svg.selectAll("rect")
         .data(fibonacci_sequence)
 
+    // last_x/y variables are for calculating where the boxes and spirals
+    // will be
     var last_x = 0;
     var last_y = 0;
+
+    // We don't want widths of squares that are 1px long, 5, 8px long, so we
+    // multiply by this constant
     var scale = 10;
 
-    var arcs = "";
-
+    // This is the angle that our golden spiral starts at
     var startAngle = Math.PI;
 
+    // this function generates a svg arc path (curved part of a circle) based
+    // on the data that will be passed to it by d3. It sets the line to be 1px
+    // thick in inner/outerRadius and increases the angle by 90 degrees counter
+    // clockwise to make the spiral arcs
     var drawArc = d3.arc()
         .innerRadius(function(d) { return  scale * d })
         .outerRadius(function(d) { return  scale * d - 1})
@@ -178,6 +235,12 @@ var update = function(value) {
             return startAngle 
         });
 
+    // This function when passesd the fibonacci sequence value, d, and it's current
+    // data number, i, (the nth element of the fibonacci sequence starting from 0)
+    // checks the remainder and applies logic found out about how the squares
+    // position themselves for their x value based on their remainder when i/4.
+    // This is because the squares have rules applied to them based on whether
+    // they are above, right, left, and below in the golden spiral.
     var x = function(d, i) {
         if (i == 0) {
             var x = width/2
@@ -202,6 +265,8 @@ var update = function(value) {
         return x;
     }
 
+    // y is exactly like x but with different rules for the y value of the
+    // equation
     var y = function(d, i) {
          if (i == 0) {
             var y = height/2
@@ -226,14 +291,26 @@ var update = function(value) {
         return y;
     }
 
+    // Here we use .enter() and .append("rect") to actually create the rects
+    // using d3. d3 will then call all of the attr functions that are chained
+    // to rects for each data element there is and pass those functions d (
+    // the current fibonacci sequence value) and i ( the current data element
+    // index starting from 0)
     rects.enter()
         .append("rect")
         .merge(rects)
+        // x sets the x pos of the square to draw from (draws 
+        // from the top left corner
         .attr("x", x)
+        // .transition and .duration is some d3 magic that automatically
+        // transitions elements in based on the data
         .transition()
         .duration(1000)
+        // same as x but for y
         .attr("y", y)
+        // stroke is the stroke color
         .attr("stroke", "black")
+        // fill is the fill color
         .attr("fill", "rgba(124,240,10,0.5)")
         .attr("width", function(d) {
             return d * scale;
@@ -242,6 +319,7 @@ var update = function(value) {
             return d * scale;
         })
 
+    // here we do the same as we did for rects but for paths 
     var paths = svg.selectAll("path").data(fibonacci_sequence)
 
     paths.enter()
@@ -250,6 +328,12 @@ var update = function(value) {
         .transition()
         .duration(1000)
         .attr("transform", function(d, i) {
+            // because we already create the arcs in the right angle, all
+            // we have to do is position them to the right x and y.
+            // For paths, there isn't an x and y value, but there is a transform
+            // function that looks like this transform="translate(x, y)"
+            // So we found how the arcs would act on certain /4 remainders
+            // like for the boxes and translated them according to those rules
             if (i % 4 == 0) {
                 return "translate(" + x(d, i) + "," + y(d, i) + ")"
             } else if (i % 4 == 1) {
@@ -260,16 +344,24 @@ var update = function(value) {
                 return "translate(" + (x(d, i) + scale * d)+ "," + y(d, i) + ")"
             }
         })
+        // we call drawArc with the data and index values to generate the arcs
+        // and actually attach it to the path
         .attr("d", drawArc);
 
+    // This code just makes the transitions for when the selected fibonacci nth
+    // value decreases -- more d3 magic
     rects.exit().transition().duration(1000).attr("y", 0).remove();
     paths.exit().transition().duration(1000).remove();
+
+    // This renders the latex for the equation input and renders the list
     katex.render("f(" + value + ") = " + result, equationResultKatex);
     d3.select('.equationResult2').text(fibonacci_sequence);
 };
 
+// we initialize the visualization with a nth value of 9
 update(9);
 
+// we make sure that update is called with a value everytime the slider changes
 equationInput.on("input", function() {
 	update(this.value);
 });
