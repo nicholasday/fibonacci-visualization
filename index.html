@@ -30,7 +30,17 @@
         </div>
     </div>
     <hr />
+    <div class="row">
     <svg id="svg"></svg>
+    </div>
+    <hr />
+    <div class="row">
+        <h3 class="center">Explicit Equation Derivation</h3>
+        <div class="col-md-6 left">
+        </div>
+        <div class="col-md-6 right">
+        </div>
+    </div>
 </div>
 <script src="js/d3.min.js"></script>
 <script src="js/katex.min.js"></script>
@@ -40,6 +50,8 @@
 document.addEventListener('DOMContentLoaded', function() {
 var element = document.getElementById("equation");
 var element2 = document.getElementById("explicitEquation");
+var bottomRight = document.getElementsByClassName("right")[0];
+var bottomLeft = document.getElementsByClassName("left")[0];
 
 var recursiveEquation = "\\begin{aligned}" +
     "f(x)=\\begin{cases} " +
@@ -53,8 +65,61 @@ var explicitEquation = "x_n = \\frac{\\sqrt{5} - 1}{2\\sqrt{5}}" +
     " + \\frac{1 + \\sqrt{5}}{2\\sqrt{5}}" +
     "\\Bigg(\\frac{1 - \\sqrt{5}}{2}\\Bigg)^n"
 
+var leftRecursiveDerivation = "\\begin{aligned}" +
+    "A &= 1 - B" + 
+    "\\\\ " + 
+    "&= 1 - (\\frac{1 + \\sqrt{5}}{2\\sqrt{5}})" +
+    "\\\\ " + 
+    "&= 1 + \\frac{-1 - \\sqrt{5}}{2\\sqrt{5}}" +
+    "\\\\ " + 
+    "&= \\frac{2\\sqrt{5}}{2\\sqrt{5}} + \\frac{-1 - \\sqrt{5}}{2\\sqrt{5}}" +
+    "\\\\ " + 
+    "&= \\frac{2\\sqrt{5} -1 - \\sqrt{5}}{2\\sqrt{5}}" + 
+    "\\\\ " + 
+    "&= \\frac{\\sqrt{5} - 1}{2\\sqrt{5}}" + 
+    "\\end{aligned}"
+
+
+var rightRecursiveDerivation = "\\begin{aligned} roots: \\\\ " +
+    "\\frac{1 - \\sqrt{5}}{2}" +
+    "\\frac{1 + \\sqrt{5}}{2}" +
+    "\\\\ " +
+    "x_0 = A + B = 1 \\\\ " + 
+    "x_1 = A(\\frac{1 - \\sqrt{5}}{2}) +" +
+    "B(\\frac{1 + \\sqrt{5}}{2})" +
+    " = 1" + 
+    "\\\\ " +
+    "A = 1 - B" + 
+    "\\\\ " +
+    "x_1 = (1 - B)(\\frac{1 - \\sqrt{5}}{2}) +" +
+    "B(\\frac{1 + \\sqrt{5}}{2})" +
+    " = 1" +
+    "\\\\ " +
+    "\\frac{1 - \\sqrt{5}}{2}" +
+    "- B(\\frac{1 - B}{2}) + B(\\frac{1 + B}{2}) = 1" +
+    "\\\\ " +
+    "-B(" +
+    "\\frac{1 - \\sqrt{5}}{2})" +
+    " + B(\\frac{1 + \\sqrt{5}}{2})" +
+    " = 1 - " +
+    "\\frac{1 - \\sqrt{5}}{2}" +
+    "\\\\ " +
+    "B(-(" +
+    "\\frac{1 - \\sqrt{5}}{2})" +
+    " + \\frac{1 + \\sqrt{5}}{2})" +
+    "\\\\ " +
+    "B(\\frac{\\sqrt{5} + \\sqrt{5}}{2})" +
+    " = \\frac{2}{2} - (\\frac{1 - \\sqrt{5}}{2})" + 
+    "\\\\ " +
+    "B\\sqrt{5} = \\frac{1 + \\sqrt{5}}{2}" +
+    "\\\\ " +
+    "B = \\frac{1 + \\sqrt{5}}{2\\sqrt{5}}" + 
+    "\\\\ \\end{aligned}"
+
 katex.render(recursiveEquation, element, {displayMode: true});
 katex.render(explicitEquation, element2, {displayMode: true});
+katex.render(rightRecursiveDerivation, bottomRight, {displayMode: true});
+katex.render(leftRecursiveDerivation, bottomLeft, {displayMode: true});
 
 var recursive = function(n) {
     if (n == 1 || n == 2) {
